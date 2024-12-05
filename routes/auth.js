@@ -1,10 +1,24 @@
 import express from "express";
-import { signup, login, myInfo } from "../controllers/auth.js";
-import isAuthenticated from "../middlewares/auth.js";
+import passport from "passport";
+import { googleCallback } from "../controllers/auth.js";
+import { frontendUrl } from "../config/constants.js";
 
 const router = express.Router();
-router.post("/signup", signup);
-router.post("/login", login);
-router.get("/me", isAuthenticated, myInfo);
+
+router.get(
+    "/google",
+    passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+    "/google/callback",
+    passport.authenticate("google", {
+        failureRedirect: `${frontendUrl}/`,
+        session: false,
+    }),
+    async (req, res, next) => {
+        googleCallback(req.user, req, res, next);
+    }
+);
 
 export default router;
