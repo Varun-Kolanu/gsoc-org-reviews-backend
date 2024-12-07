@@ -1,10 +1,12 @@
 import express from "express";
 import passport from "passport";
-import { googleCallback } from "../controllers/auth.js";
+import { googleCallback, myInfo } from "../controllers/auth.js";
 import { frontendUrl } from "../config/constants.js";
+import isAuthenticated from "../middlewares/auth.js";
 
 const router = express.Router();
 
+router.get("/me", isAuthenticated, myInfo)
 router.get(
     "/google",
     passport.authenticate("google", { scope: ["profile", "email"] })
@@ -13,7 +15,7 @@ router.get(
 router.get(
     "/google/callback",
     passport.authenticate("google", {
-        failureRedirect: `${frontendUrl}/`,
+        failureRedirect: `${frontendUrl}/backend_redirect?error=unknown`,
         session: false,
     }),
     async (req, res, next) => {

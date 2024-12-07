@@ -3,6 +3,10 @@ import { User } from "../models/user.js";
 import { tryCatch, userIsFromIITBhu } from "../utils/utils.js";
 import jwt from "jsonwebtoken";
 
+export const myInfo = tryCatch(async (req, res, next) => {
+    res.status(200).json(req.user);
+});
+
 export const createGoogleUser = tryCatch(async (
     profile,
     cb
@@ -24,11 +28,11 @@ export const googleCallback = tryCatch(async (user, req, res, next) => {
     let googleUser = await User.findOne({ googleId: user.id });
 
     if (!googleUser)
-        res.redirect(`${frontendUrl}/login?error=not_from_iit_bhu`);
+        res.redirect(`${frontendUrl}/backend_redirect?error=not_from_iit_bhu`);
     else {
         const token = jwt.sign({ _id: googleUser._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
-        res.redirect(`${frontendUrl}?token=${token}`);
+        res.redirect(`${frontendUrl}/backend_redirect?token=${token}`);
     }
 });
