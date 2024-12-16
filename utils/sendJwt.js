@@ -7,7 +7,7 @@ export const sendJwt = async (
     statusCode,
 ) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "180m",
+        expiresIn: "24h",
     });
 
     res.status(statusCode)
